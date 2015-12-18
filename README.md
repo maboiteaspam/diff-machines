@@ -57,7 +57,7 @@ and invoke `call(err, filePath)`.
 
 __configuration__
 
-```json
+```js
 {
     host1:{},
     host2:{},
