@@ -135,6 +135,9 @@ diff-machines -v -- vagrant@loalhost:2222 vagrant@loalhost:2222 php-ini .bashrc
 
 ```
 
+Obviously you d need to `npm i php-ini --save` before that.
+Thus lock the remote dependency into a package json of your projects.
+
 
 ## More
 
