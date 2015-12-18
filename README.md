@@ -28,7 +28,14 @@ diff files between machines over ssh.
      diff-machines -h
 ```
 
-It will diff the service `php` and the file `.bashrc` between `hostA` and `hostB`.
+__Example__
+
+It will diff the service `php` and the file `.bashrc`
+between `vagrant` and `vagrant` boxes.
+
+```bash
+     diff-machines -v -- vagrant@loalhost:2222 vagrant@loalhost:2222 php .bashrc
+```
 
 The result is sent to `stdout` and produce unified patch with support of `jsdiff`
 
