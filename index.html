@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>Diff-machines by maboiteaspam</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+  </head>
+  <body>
+    <section class="page-header">
+      <h1 class="project-name">Diff-machines</h1>
+      <h2 class="project-tagline">diff files between machines over ssh</h2>
+      <a href="https://github.com/maboiteaspam/diff-machines" class="btn">View on GitHub</a>
+      <a href="https://github.com/maboiteaspam/diff-machines/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/maboiteaspam/diff-machines/tarball/master" class="btn">Download .tar.gz</a>
+    </section>
+
+    <section class="main-content">
+      <h1>
+<a id="diff-machines" class="anchor" href="#diff-machines" aria-hidden="true"><span class="octicon octicon-link"></span></a>diff-machines</h1>
+
+<p>diff files between machines over ssh.</p>
+
+<h2>
+<a id="install" class="anchor" href="#install" aria-hidden="true"><span class="octicon octicon-link"></span></a>Install</h2>
+
+<pre><code>npm i maboiteaspam/diff-machines -g
+</code></pre>
+
+<h2>
+<a id="usage" class="anchor" href="#usage" aria-hidden="true"><span class="octicon octicon-link"></span></a>Usage</h2>
+
+<p><code>diff-machines</code> is a binary to install globally.</p>
+
+<pre lang="ssh"><code>
+  diff files between machines over ssh.
+
+  Usage
+     diff-machines [hostA] [hostB] [files or services...]
+     diff-machines [opts] -- [hostA] [hostB] [files or services...]
+
+  Options
+     -v    verbose
+     -h    show help
+
+ Examples
+     diff-machines user@hostA:port user@hostB:port php .bashrc
+     diff-machines -v -- vagrant@loalhost:2222 vagrant@loalhost:2222 php .bashrc
+     diff-machines -h
+</code></pre>
+
+<p><strong>Example</strong></p>
+
+<p>It will diff the service <code>php</code> and the file <code>.bashrc</code>
+between <code>vagrant</code> and <code>vagrant</code> boxes.</p>
+
+<div class="highlight highlight-source-shell"><pre>     diff-machines -v -- vagrant@loalhost:2222 vagrant@loalhost:2222 php .bashrc</pre></div>
+
+<p>The result is sent to <code>stdout</code> and produce unified patch with support of <code>jsdiff</code></p>
+
+<div class="highlight highlight-source-shell"><pre><span class="pl-c"># node bin.js vagrant vagrant php .bashrc</span>
+
+
+Index: /etc/php.ini
+===================================================================
+--- /etc/php.ini
++++ /etc/php.ini
+
+
+
+Index: .bashrc
+===================================================================
+--- .bashrc
++++ .bashrc
+</pre></div>
+
+<h2>
+<a id="configuration" class="anchor" href="#configuration" aria-hidden="true"><span class="octicon octicon-link"></span></a>Configuration</h2>
+
+<p><code>diff-machines</code> can read a configuration file located on <code>cwd</code>.</p>
+
+<p>This file is an exported <code>function()</code> which returns an <code>object</code>.</p>
+
+<p>This configuration object can configure ssh <code>hosts</code> and <code>services</code> by name.</p>
+
+<p><code>service</code> are functions resolver which receives an <code>sshConn</code> of <code>ssh2-utils</code>
+and invoke <code>call(err, filePath)</code>.</p>
+
+<p><code>filePath</code> is the location of the file identified for the given <code>service</code>.</p>
+
+<p><strong>configuration</strong></p>
+
+<div class="highlight highlight-source-js"><pre>{
+    host1<span class="pl-k">:</span>{},
+    host2<span class="pl-k">:</span>{},
+    services<span class="pl-k">:</span>{
+        <span class="pl-en">service1</span><span class="pl-k">:</span> <span class="pl-k">function</span> (<span class="pl-smi">sshConn</span>, <span class="pl-smi">done</span>){ <span class="pl-en">done</span>(err, filePath); },
+        <span class="pl-en">service2</span><span class="pl-k">:</span> <span class="pl-k">function</span> (<span class="pl-smi">sshConn</span>, <span class="pl-smi">done</span>){ <span class="pl-en">done</span>(err, filePath); }
+    },
+}</pre></div>
+
+<p>In this example,
+<code>php</code> ini file is resolved with the help of the <code>php</code> binary itself. Cross-distro.</p>
+
+<p><code>notFound</code>, demonstrate that passing anything into <code>err</code> will effectively stop the program.</p>
+
+<p><strong>diff-svc.js</strong></p>
+
+<div class="highlight highlight-source-js"><pre>
+<span class="pl-k">var</span> <span class="pl-c1">SSH2</span>  <span class="pl-k">=</span> <span class="pl-c1">require</span>(<span class="pl-s"><span class="pl-pds">'</span>ssh2-utils<span class="pl-pds">'</span></span>)
+
+<span class="pl-c1">module</span>.<span class="pl-en">exports</span> <span class="pl-k">=</span> <span class="pl-k">function</span> () {
+  <span class="pl-k">var</span> ssh <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-en">SSH2</span>();
+  <span class="pl-k">return</span> {
+    <span class="pl-s"><span class="pl-pds">'</span>vagrant<span class="pl-pds">'</span></span><span class="pl-k">:</span> {
+      <span class="pl-s"><span class="pl-pds">'</span>host<span class="pl-pds">'</span></span><span class="pl-k">:</span><span class="pl-s"><span class="pl-pds">'</span>127.0.0.1<span class="pl-pds">'</span></span>,
+      port<span class="pl-k">:</span> <span class="pl-c1">2222</span>,
+      username<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>vagrant<span class="pl-pds">'</span></span>,
+      password<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>vagrant<span class="pl-pds">'</span></span>
+    },
+    <span class="pl-s"><span class="pl-pds">'</span>services<span class="pl-pds">'</span></span><span class="pl-k">:</span> {
+      <span class="pl-s"><span class="pl-pds">'</span><span class="pl-en">php</span><span class="pl-pds">'</span></span><span class="pl-k">:</span> <span class="pl-k">function</span> (<span class="pl-smi">conn</span>, <span class="pl-smi">done</span>) {
+        <span class="pl-smi">ssh</span>.<span class="pl-c1">exec</span>(conn, <span class="pl-s"><span class="pl-pds">'</span>php -r "echo php_ini_loaded_file();"<span class="pl-pds">'</span></span>, <span class="pl-k">function</span> (<span class="pl-smi">err</span>, <span class="pl-smi">stdout</span>, <span class="pl-smi">stderr</span>) {
+          <span class="pl-en">done</span>(err, stdout)
+        })
+      },
+      <span class="pl-s"><span class="pl-pds">'</span><span class="pl-en">notFound</span><span class="pl-pds">'</span></span><span class="pl-k">:</span> <span class="pl-k">function</span> (<span class="pl-smi">conn</span>, <span class="pl-smi">done</span>) {
+        <span class="pl-en">done</span>(<span class="pl-c1">false</span>)
+      }
+    }
+  }
+};
+</pre></div>
+
+<h2>
+<a id="re-usable-services" class="anchor" href="#re-usable-services" aria-hidden="true"><span class="octicon octicon-link"></span></a>Re-usable services</h2>
+
+<p>It s possible to pass in not <code>service</code> name of the <code>local</code> config object, rather than,
+<code>module</code> names.</p>
+
+<p>So if one would export the <code>php</code> service to a module name <code>php-ini</code>, that would look like,</p>
+
+<p><strong>index.js</strong></p>
+
+<div class="highlight highlight-source-js"><pre>
+<span class="pl-k">var</span> <span class="pl-c1">SSH2</span>  <span class="pl-k">=</span> <span class="pl-c1">require</span>(<span class="pl-s"><span class="pl-pds">'</span>ssh2-utils<span class="pl-pds">'</span></span>)
+<span class="pl-k">var</span> ssh <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-en">SSH2</span>();
+
+<span class="pl-c1">module</span>.<span class="pl-en">exports</span> <span class="pl-k">=</span> <span class="pl-k">function</span> (<span class="pl-smi">conn</span>, <span class="pl-smi">done</span>) {
+    <span class="pl-smi">ssh</span>.<span class="pl-c1">exec</span>(conn, <span class="pl-s"><span class="pl-pds">'</span>php -r "echo php_ini_loaded_file();"<span class="pl-pds">'</span></span>, <span class="pl-k">function</span> (<span class="pl-smi">err</span>, <span class="pl-smi">stdout</span>, <span class="pl-smi">stderr</span>) {
+        <span class="pl-en">done</span>(err, stdout)
+    });
+}
+</pre></div>
+
+<p>It would then be possible to invoke <code>diff-machines</code> in such fashion</p>
+
+<div class="highlight highlight-source-shell"><pre>
+diff-machines -v -- vagrant@loalhost:2222 vagrant@loalhost:2222 php-ini .bashrc
+</pre></div>
+
+<p>Obviously you d need to <code>npm i php-ini --save</code> before that.
+Thus lock the remote dependency into a package json of your projects.</p>
+
+<h2>
+<a id="more" class="anchor" href="#more" aria-hidden="true"><span class="octicon octicon-link"></span></a>More</h2>
+
+<ul>
+<li><a href="https://github.com/kpdecker/jsdiff">https://github.com/kpdecker/jsdiff</a></li>
+<li><a href="https://github.com/sindresorhus/multiline">https://github.com/sindresorhus/multiline</a></li>
+<li><a href="https://github.com/mscdex/ssh2/">https://github.com/mscdex/ssh2/</a></li>
+<li><a href="https://github.com/maboiteaspam/ssh2-utils">https://github.com/maboiteaspam/ssh2-utils</a></li>
+<li><a href="https://github.com/maboiteaspam/diff-machines/blob/master/diff-svc.js">https://github.com/maboiteaspam/diff-machines/blob/master/diff-svc.js</a></li>
+</ul>
+
+<h2>
+<a id="ssh--vagrant" class="anchor" href="#ssh--vagrant" aria-hidden="true"><span class="octicon octicon-link"></span></a>ssh &amp; vagrant</h2>
+
+<p><strong>~/.ssh/config</strong></p>
+
+<pre><code>Host localhost
+  HostName 127.0.0.1
+  Port 2222
+  StrictHostKeyChecking no
+</code></pre>
+
+<ul>
+<li><a href="http://serverfault.com/questions/6233/how-to-remove-strict-rsa-key-checking-in-ssh-and-whats-the-problem-here">http://serverfault.com/questions/6233/how-to-remove-strict-rsa-key-checking-in-ssh-and-whats-the-problem-here</a></li>
+</ul>
+
+      <footer class="site-footer">
+        <span class="site-footer-owner"><a href="https://github.com/maboiteaspam/diff-machines">Diff-machines</a> is maintained by <a href="https://github.com/maboiteaspam">maboiteaspam</a>.</span>
+
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
+      </footer>
+
+    </section>
+
+  
+  </body>
+</html>
