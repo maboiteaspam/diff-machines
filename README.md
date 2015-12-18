@@ -108,6 +108,7 @@ module.exports = function () {
 - https://github.com/kpdecker/jsdiff
 - https://github.com/sindresorhus/multiline
 - https://github.com/maboiteaspam/ssh2-utils
+- https://github.com/maboiteaspam/diff-machines/blob/master/diff-svc.js
 
 
 ## ssh & vagrant

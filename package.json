@@ -2,7 +2,9 @@
   "name": "diff-machines",
   "version": "1.0.0",
   "description": "diff files between machines",
-  "main": "index.js",
+  "bin": {
+    "diff-machines": "./bin.js"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "patch": "npm version patch -m \"patch %s\"",
@@ -13,7 +15,8 @@
     "postversion": "git push && git push --tags"
   },
   "keywords": [
-    ""
+    "diff",
+    "ssh"
   ],
   "author": "maboiteaspam",
   "license": "WTF",
