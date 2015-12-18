@@ -11,13 +11,21 @@ diff files between machines over ssh.
 `diff-machines` is a binary to install globally.
 
 ```ssh
-diff-machines [hostA] [hostB] [files or services...]
-diff-machines [opts] -- [hostA] [hostB] [files or services...]
 
-diff-machines user@hostA:port user@hostB:port php .bashrc
+  diff files between machines over ssh.
 
-diff-machines -v -- vagrant@loalhost:2222 vagrant@loalhost:2222 php .bashrc
+  Usage
+     diff-machines [hostA] [hostB] [files or services...]
+     diff-machines [opts] -- [hostA] [hostB] [files or services...]
 
+  Options
+     -v    verbose
+     -h    show help
+
+ Examples
+     diff-machines user@hostA:port user@hostB:port php .bashrc
+     diff-machines -v -- vagrant@loalhost:2222 vagrant@loalhost:2222 php .bashrc
+     diff-machines -h
 ```
 
 It will diff the service `php` and the file `.bashrc` between `hostA` and `hostB`.
