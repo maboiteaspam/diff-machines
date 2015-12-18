@@ -143,6 +143,7 @@ Thus lock the remote dependency into a package json of your projects.
 
 - https://github.com/kpdecker/jsdiff
 - https://github.com/sindresorhus/multiline
+- https://github.com/mscdex/ssh2/
 - https://github.com/maboiteaspam/ssh2-utils
 - https://github.com/maboiteaspam/diff-machines/blob/master/diff-svc.js
 
