@@ -10,7 +10,7 @@ diff files between machines over ssh.
 
 `diff-machines` is a binary to install globally.
 
-```js
+```ssh
 diff-machines [hostA] [hostB] [files or services...]
 diff-machines [opts] -- [hostA] [hostB] [files or services...]
 
@@ -102,6 +102,39 @@ module.exports = function () {
 };
 
 ```
+
+## Re-usable services
+
+It s possible to pass in not `service` name of the `local` config object, rather than,
+`module` names.
+
+
+So if one would export the `php` service to a module name `php-ini`, that would look like,
+
+__index.js__
+
+```js
+
+var SSH2  = require('ssh2-utils')
+var ssh = new SSH2();
+
+module.exports = function (conn, done) {
+    ssh.exec(conn, 'php -r "echo php_ini_loaded_file();"', function (err, stdout, stderr) {
+        done(err, stdout)
+    });
+}
+
+```
+
+
+It would then be possible to invoke `diff-machines` in such fashion
+
+```bash
+
+diff-machines -v -- vagrant@loalhost:2222 vagrant@loalhost:2222 php-ini .bashrc
+
+```
+
 
 ## More
 
