@@ -1,5 +1,23 @@
 #!/usr/bin/env node
 
+function usage () {/*
+
+  diff files between machines over ssh.
+
+  Usage
+     diff-machines [hostA] [hostB] [files or services...]
+     diff-machines [opts] -- [hostA] [hostB] [files or services...]
+
+  Options
+     -v    verbose
+     -h    show help
+
+ Examples
+     diff-machines user@hostA:port user@hostB:port php .bashrc
+     diff-machines -v -- vagrant@loalhost:2222 vagrant@loalhost:2222 php .bashrc
+     diff-machines -h
+ */}
+
 var argv  = require('minimist')(process.argv.slice(2));         if (argv.v) process.env['DEBUG'] = 'diff';
 var debug = require('debug')('diff')
 var fs    = require('fs')
@@ -8,17 +26,8 @@ var SSH2  = require('ssh2-utils')
 var jsdiff = require('diff');
 
 var rawArgs = argv['_']
-if (!rawArgs || rawArgs.length<3) {
-  return console.error('wrong command\n%s', require('multiline')(function(){/*
-
-   diff-machines [hostA] [hostB] [files or services...]
-
-   diff-machines [opts] -- [hostA] [hostB] [files or services...]
-
-   diff-machines user@hostA:port user@hostB:port php .bashrc
-
-   diff-machines -v -- vagrant@loalhost:2222 vagrant@loalhost:2222 php .bashrc
-   */}))
+if ((!rawArgs || rawArgs.length<3) || argv.h) {
+  return console.error('%s\n%s', argv.h?'Help':'wrong command', require('multiline')(usage))
 }
 
 var hostLeft = {
