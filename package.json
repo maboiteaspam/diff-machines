@@ -1,0 +1,25 @@
+{
+    "name": "diff-machines",
+    "version": "1.0.0",
+    "description": "diff files between machines",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "patch": "npm version patch -m \"patch %s\"",
+        "minor": "npm version minor -m \"minor %s\"",
+        "major": "npm version major -m \"major %s\"",
+        "preversion": "echo \"npm test: not defined\" && npi --explicit",
+        "version": "echo \"npm run build: not defined\"",
+        "postversion": "git push && git push --tags"
+    },
+    "keywords": [
+        ""
+    ],
+    "author": "maboiteaspam",
+    "license": "WTF",
+    "dependencies": {
+        "debug": "^2.2.0",
+        "flower": "maboiteaspam/flower",
+        "ssh2-utils": "^1.0.28"
+    }
+}
