@@ -10,7 +10,14 @@ var jsdiff = require('diff');
 var rawArgs = argv['_']
 if (!rawArgs || rawArgs.length<3) {
   return console.error('wrong command\n%s', multiline(function(){/*
-   diff-machines user@host:port user@host:port service1 service2
+
+   diff-machines [hostA] [hostB] [files or services...]
+
+   diff-machines [opts] -- [hostA] [hostB] [files or services...]
+
+   diff-machines user@hostA:port user@hostB:port php .bashrc
+
+   diff-machines -v -- vagrant@loalhost:2222 vagrant@loalhost:2222 php .bashrc
    */}))
 }
 
