@@ -4,7 +4,7 @@ diff files between machines over ssh.
 
 ## Install
 
-    npm i diff-machines -g
+    npm i maboiteaspam/diff-machines -g
 
 ## Usage
 
