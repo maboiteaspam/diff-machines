@@ -9,7 +9,7 @@ var jsdiff = require('diff');
 
 var rawArgs = argv['_']
 if (!rawArgs || rawArgs.length<3) {
-  return console.error('wrong command\n%s', multiline(function(){/*
+  return console.error('wrong command\n%s', require('multiline')(function(){/*
 
    diff-machines [hostA] [hostB] [files or services...]
 
