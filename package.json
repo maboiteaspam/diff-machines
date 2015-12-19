@@ -6,6 +6,7 @@
     "diff-machines": "./bin.js"
   },
   "scripts": {
+    "vagrant": "vagrant up --provider=virtualbox",
     "test": "echo \"Error: no test specified\" && exit 1",
     "patch": "npm version patch -m \"patch %s\"",
     "minor": "npm version minor -m \"minor %s\"",
