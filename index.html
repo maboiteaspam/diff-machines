@@ -1,25 +1,34 @@
 <!DOCTYPE html>
-<html lang="en-us">
+<html>
   <head>
-    <meta charset="UTF-8">
-    <title>Diff-machines by maboiteaspam</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
-    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
     <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
-  </head>
-  <body>
-    <section class="page-header">
-      <h1 class="project-name">Diff-machines</h1>
-      <h2 class="project-tagline">diff files between machines over ssh</h2>
-      <a href="https://github.com/maboiteaspam/diff-machines" class="btn">View on GitHub</a>
-      <a href="https://github.com/maboiteaspam/diff-machines/zipball/master" class="btn">Download .zip</a>
-      <a href="https://github.com/maboiteaspam/diff-machines/tarball/master" class="btn">Download .tar.gz</a>
-    </section>
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print">
 
-    <section class="main-content">
-      <h1>
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <title>Diff-machines by maboiteaspam</title>
+  </head>
+
+  <body>
+    <header>
+      <div class="inner">
+        <h1>Diff-machines</h1>
+        <h2>diff files between machines over ssh</h2>
+        <a href="https://github.com/maboiteaspam/diff-machines" class="button"><small>View project on</small> GitHub</a>
+      </div>
+    </header>
+
+    <div id="content-wrapper">
+      <div class="inner clearfix">
+        <section id="main-content">
+          <h1>
 <a id="diff-machines" class="anchor" href="#diff-machines" aria-hidden="true"><span class="octicon octicon-link"></span></a>diff-machines</h1>
 
 <p>diff files between machines over ssh.</p>
@@ -48,7 +57,7 @@
 
  Examples
      diff-machines user@hostA:port user@hostB:port php .bashrc
-     diff-machines -v -- vagrant@loalhost:2222 vagrant@loalhost:2222 php .bashrc
+     diff-machines -v -- vagrant vagrant php .bashrc
      diff-machines -h
 </code></pre>
 
@@ -57,7 +66,7 @@
 <p>It will diff the service <code>php</code> and the file <code>.bashrc</code>
 between <code>vagrant</code> and <code>vagrant</code> boxes.</p>
 
-<div class="highlight highlight-source-shell"><pre>     diff-machines -v -- vagrant@loalhost:2222 vagrant@loalhost:2222 php .bashrc</pre></div>
+<div class="highlight highlight-source-shell"><pre>     diff-machines -v -- vagrant@localhost:2222 vagrant@localhost:2222 php .bashrc</pre></div>
 
 <p>The result is sent to <code>stdout</code> and produce unified patch with support of <code>jsdiff</code></p>
 
@@ -77,12 +86,19 @@ Index: .bashrc
 +++ .bashrc
 </pre></div>
 
+<p><strong>password</strong> credentials-like requires you to register the machine into a configuration file
+located on <code>cwd</code>. See below.</p>
+
+<p>Then you must use its alias when you invoke <code>diff-machines</code></p>
+
+<div class="highlight highlight-source-shell"><pre>     diff-machines -v -- vagrant vagrant php .bashrc</pre></div>
+
 <h2>
 <a id="configuration" class="anchor" href="#configuration" aria-hidden="true"><span class="octicon octicon-link"></span></a>Configuration</h2>
 
 <p><code>diff-machines</code> can read a configuration file located on <code>cwd</code>.</p>
 
-<p>This file is an exported <code>function()</code> which returns an <code>object</code>.</p>
+<p>This file exports a <code>function()</code> which returns an <code>object</code>.</p>
 
 <p>This configuration object can configure ssh <code>hosts</code> and <code>services</code> by name.</p>
 
@@ -159,11 +175,22 @@ and invoke <code>call(err, filePath)</code>.</p>
 <p>It would then be possible to invoke <code>diff-machines</code> in such fashion</p>
 
 <div class="highlight highlight-source-shell"><pre>
-diff-machines -v -- vagrant@loalhost:2222 vagrant@loalhost:2222 php-ini .bashrc
+diff-machines -v -- vagrant vagrant php-ini .bashrc
 </pre></div>
 
 <p>Obviously you d need to <code>npm i php-ini --save</code> before that.
 Thus lock the remote dependency into a package json of your projects.</p>
+
+<h2>
+<a id="dev" class="anchor" href="#dev" aria-hidden="true"><span class="octicon octicon-link"></span></a>Dev</h2>
+
+<p>Kick-start your hacks like this,</p>
+
+<pre><code>git clone..
+vagrant up
+node bin.js vagrant vagrant php .bashrc
+node bin.js -v -- vagrant vagrant php .bashrc
+</code></pre>
 
 <h2>
 <a id="more" class="anchor" href="#more" aria-hidden="true"><span class="octicon octicon-link"></span></a>More</h2>
@@ -190,14 +217,24 @@ Thus lock the remote dependency into a package json of your projects.</p>
 <ul>
 <li><a href="http://serverfault.com/questions/6233/how-to-remove-strict-rsa-key-checking-in-ssh-and-whats-the-problem-here">http://serverfault.com/questions/6233/how-to-remove-strict-rsa-key-checking-in-ssh-and-whats-the-problem-here</a></li>
 </ul>
+        </section>
 
-      <footer class="site-footer">
-        <span class="site-footer-owner"><a href="https://github.com/maboiteaspam/diff-machines">Diff-machines</a> is maintained by <a href="https://github.com/maboiteaspam">maboiteaspam</a>.</span>
+        <aside id="sidebar">
+          <a href="https://github.com/maboiteaspam/diff-machines/zipball/master" class="button">
+            <small>Download</small>
+            .zip file
+          </a>
+          <a href="https://github.com/maboiteaspam/diff-machines/tarball/master" class="button">
+            <small>Download</small>
+            .tar.gz file
+          </a>
 
-        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
-      </footer>
+          <p class="repo-owner"><a href="https://github.com/maboiteaspam/diff-machines"></a> is maintained by <a href="https://github.com/maboiteaspam">maboiteaspam</a>.</p>
 
-    </section>
+          <p>This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the Architect theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.</p>
+        </aside>
+      </div>
+    </div>
 
   
   </body>
