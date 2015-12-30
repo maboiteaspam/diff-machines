@@ -1,6 +1,6 @@
 {
   "name": "diff-machines",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "diff files between machines",
   "bin": {
     "diff-machines": "./bin.js"
