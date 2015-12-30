@@ -18,17 +18,19 @@ function usage () {/*
      diff-machines -h
  */}
 
-var argv  = require('minimist')(process.argv.slice(2));         if (argv.v) process.env['DEBUG'] = 'diff';
-var debug = require('debug')('diff')
-var fs    = require('fs')
-var async = require('async')
-var SSH2  = require('ssh2-utils')
-var jsdiff = require('diff');
+var pkg     = require('./package.json')
+var argv    = require('minimist')(process.argv.slice(2));
+var debug   = require('@maboiteaspam/set-verbosity')(pkg.name, process.argv);
+var help    = require('@maboiteaspam/show-help')(usage, process.argv, pkg);
+var fs      = require('fs')
+var async   = require('async')
+var SSH2    = require('ssh2-utils')
+var jsdiff  = require('diff');
+var hParse  = require('@maboiteaspam/ssh-host-parse');
 
-var rawArgs = argv['_']
-if ((!rawArgs || rawArgs.length<3) || argv.h) {
-  return console.error('%s\n%s', argv.h?'Help':'wrong command', require('multiline')(usage))
-}
+var rawArgs = argv['_'];
+debug('rawArgs %j', rawArgs);
+(!rawArgs || rawArgs.length<3) && help.print(usage, pkg) && help.die("Missing hosts");
 
 var hostLeft = {
   'host':'127.0.0.1',
@@ -51,13 +53,14 @@ if (fs.existsSync('./diff-svc.js')) {
 
 
 
-var machineLeft = rawArgs.shift()
-var machineRight = rawArgs.shift()
+var machineLeft = rawArgs.shift();
+var machineRight = rawArgs.shift();
 
-if (machineLeft in config) hostLeft = config[machineLeft]
-else hostLeft = parse(machineLeft) || die('Invalid address for '+machineLeft)
-if (machineRight in config) hostRight = config[machineRight]
-else hostRight = parse(machineRight) || die('Invalid address for '+machineRight)
+if (machineLeft in config) hostLeft = config[machineLeft];
+else hostLeft = hParse(machineLeft) || help.die('Invalid address for '+machineLeft);
+
+if (machineRight in config) hostRight = config[machineRight];
+else hostRight = hParse(machineRight) || help.die('Invalid address for '+machineRight);
 
 rawArgs.forEach(function (service) {
   if (service in config.services)
@@ -71,10 +74,10 @@ rawArgs.forEach(function (service) {
       }
     }
   }
-})
+});
 
-debug('%j', hostLeft)
-debug('%j', hostRight)
+debug('hostLeft %j', hostLeft);
+debug('hostRight %j', hostRight);
 
 
 var connLeft;
@@ -86,12 +89,16 @@ var ssh = new SSH2();
 async.parallel([
   function (next) {
     ssh.getConnReady(hostLeft, function (err, conn) {
-      connLeft = conn; next(err)
+      if (err) throw err;
+      connLeft = conn;
+      next(err)
     })
   },
   function (next) {
     ssh.getConnReady(hostRight, function (err, conn) {
-      connRight = conn; next(err)
+      if (err) throw err;
+      connRight = conn;
+      next(err)
     })
   }
 ], function connReady () {
@@ -162,24 +169,4 @@ async.parallel([
       })
     })
   })
-})
-
-
-function parse(str) {
-  var port = '';
-  var user = '';
-  var host = '';
-  if (str.match(/:[0-9]+$/)) port = str.match(/:([0-9]+)$/)[1]
-  if (str.match(/^[^@]+@/)) user = str.match(/^([^@]+)@/)[1]
-  host = str.substring(user.length+1, port.length?str.length-(port.length+1):str.length)
-  return {
-    host: host,
-    user: user,
-    port: port
-  }
-}
-
-function die(str) {
-  console.error(str)
-  process.exit(0)
-}
+});

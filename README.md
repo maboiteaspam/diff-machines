@@ -24,7 +24,7 @@ diff files between machines over ssh.
 
  Examples
      diff-machines user@hostA:port user@hostB:port php .bashrc
-     diff-machines -v -- vagrant@loalhost:2222 vagrant@loalhost:2222 php .bashrc
+     diff-machines -v -- vagrant vagrant php .bashrc
      diff-machines -h
 ```
 
@@ -34,7 +34,7 @@ It will diff the service `php` and the file `.bashrc`
 between `vagrant` and `vagrant` boxes.
 
 ```bash
-     diff-machines -v -- vagrant@loalhost:2222 vagrant@loalhost:2222 php .bashrc
+     diff-machines -v -- vagrant@localhost:2222 vagrant@localhost:2222 php .bashrc
 ```
 
 The result is sent to `stdout` and produce unified patch with support of `jsdiff`
@@ -57,11 +57,20 @@ Index: .bashrc
 
 ```
 
+__password__ credentials-like requires you to register the machine into a configuration file
+located on `cwd`. See below.
+
+Then you must use its alias when you invoke `diff-machines`
+
+```bash
+     diff-machines -v -- vagrant vagrant php .bashrc
+```
+
 ## Configuration
 
 `diff-machines` can read a configuration file located on `cwd`.
 
-This file is an exported `function()` which returns an `object`.
+This file exports a `function()` which returns an `object`.
 
 This configuration object can configure ssh `hosts` and `services` by name.
 
@@ -146,13 +155,24 @@ It would then be possible to invoke `diff-machines` in such fashion
 
 ```bash
 
-diff-machines -v -- vagrant@loalhost:2222 vagrant@loalhost:2222 php-ini .bashrc
+diff-machines -v -- vagrant vagrant php-ini .bashrc
 
 ```
 
 Obviously you d need to `npm i php-ini --save` before that.
 Thus lock the remote dependency into a package json of your projects.
 
+
+## Dev
+
+Kick-start your hacks like this,
+
+```
+git clone..
+vagrant up
+node bin.js vagrant vagrant php .bashrc
+node bin.js -v -- vagrant vagrant php .bashrc
+```
 
 ## More
 
